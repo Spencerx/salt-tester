@@ -104,7 +104,8 @@ if [ ${VERSION_ID%.*} -ge 12 ]; then
     INFO="Test download"
     describe "\${CMD}" "\${INFO}"
     $SALT_CALL $CMD --out json | bin/jsontest path={"$HOST","test-package","repository-alias"} \
-        type=s value="salt"
+        type=s value="salt_testing"
+    # repo was renamed
     assert_run
 fi
 
