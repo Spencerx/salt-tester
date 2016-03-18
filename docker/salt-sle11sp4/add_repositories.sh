@@ -12,3 +12,4 @@ zypper ar -f http://download.opensuse.org/repositories/systemsmanagement:/saltst
 zypper ar -f http://download.opensuse.org/repositories/systemsmanagement:/saltstack:/testing:/testpackages/SLE_11_SP4/ "testpackages"
 
 zypper mr -p 98 salt_testing
+zypper mr -p 98 testpackages
