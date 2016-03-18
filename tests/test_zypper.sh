@@ -4,6 +4,8 @@
 source etc/config
 source lib/utils.sh
 
+source /etc/os-release
+
 EXITCODE=0
 
 CMD="pkg.owner '/etc/zypp'"
@@ -19,13 +21,20 @@ INFO="Testing pkg.list_products"
 # Tell what you want to do
 describe "\${CMD}" "\${INFO}"
 JSONOUT=$($SALT_CALL $CMD --out json)
-echo "$JSONOUT" | bin/jsontest path={"$HOST","name"} type=s value="SLES"
-assert_run
-echo "$JSONOUT" | bin/jsontest path={"$HOST","version"} type=s value="12.1"
-assert_run
-echo "$JSONOUT" | bin/jsontest path={"$HOST","release"} type=s value="0"
-assert_run
-
+if [ ${VERSION_ID%.*} -ge 12 ]; then
+    echo "$JSONOUT" | bin/jsontest path={"$HOST","name"} type=s value="SLES"
+    assert_run
+    echo "$JSONOUT" | bin/jsontest path={"$HOST","version"} type=s value="12.1"
+    assert_run
+    echo "$JSONOUT" | bin/jsontest path={"$HOST","release"} type=s value="0"
+    assert_run
+else
+    echo "$JSONOUT" | bin/jsontest path={"$HOST","name"} type=s value="SUSE_SLES"
+    assert_run
+    echo "$JSONOUT" | bin/jsontest path={"$HOST","version"} type=s value="11.4"
+    assert_run
+    # better not testing the release in SLE11
+fi
 
 INFO="Testing pkg.list_products with OEM release"
 describe "\${CMD}" "\${INFO}"
@@ -95,7 +104,6 @@ echo "$JSONOUT" | bin/jsontest path={"$HOST","test-package-zypper","summary"} \
     type=s value="Test package for Salt's pkg.latest"
 assert_run
 
-. /etc/os-release
 if [ ${VERSION_ID%.*} -ge 12 ]; then
     # download only available since SLE12
 
@@ -104,7 +112,8 @@ if [ ${VERSION_ID%.*} -ge 12 ]; then
     INFO="Test download"
     describe "\${CMD}" "\${INFO}"
     $SALT_CALL $CMD --out json | bin/jsontest path={"$HOST","test-package","repository-alias"} \
-        type=s value="salt"
+        type=s value="salt_testing"
+    # repo was renamed
     assert_run
 fi
 

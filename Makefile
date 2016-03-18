@@ -20,9 +20,14 @@ runtests:
 jenkins: install setup runtests teardown
 
 install:
+	zypper mr -p 98 testpackages
 	zypper --non-interactive in salt-master salt-minion
 	zypper --non-interactive source-install -D salt
 	zypper --non-interactive in --oldpackage test-package=42:0.0
+	#
+	# update libzypp and zypper
+	#
+	zypper --non-interactive up zypper libzypp
 
 docker_tests-sle11sp4 ::
 	docker run --rm $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/salt-sle11sp4 make -C $(DOCKER_MOUNTPOINT) jenkins

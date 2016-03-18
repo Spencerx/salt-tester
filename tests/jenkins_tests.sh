@@ -25,7 +25,7 @@ echo "$JSONOUT" | bin/jsontest path={"$HOST","test-package","summary"} \
     type=s value="Test package for Salt's pkg.info_installed"
 assert_run
 echo "$JSONOUT" | bin/jsontest path={"$HOST","test-package","status"} \
-    type=s value="out-of-date (version 42:0.0-1.1 installed)"
+    type=s matches="out-of-date \(version 42:0.0-.+ installed\)"
 assert_run
 
 # info_installed
