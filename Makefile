@@ -1,3 +1,4 @@
+DOCKER_IMAGE          = salt-sle12sp1
 DOCKER_REGISTRY       = suma-docker-registry.suse.de
 DOCKER_MOUNTPOINT     = /salt-tester
 DOCKER_VOLUMES        = -v "$(CURDIR)/:$(DOCKER_MOUNTPOINT)"
@@ -29,11 +30,20 @@ install:
 	#
 	zypper --non-interactive up zypper libzypp
 
+docker_pull ::
+	docker pull $(DOCKER_REGISTRY)/$(DOCKER_IMAGE)
+
+docker_tests :: docker_pull
+	docker run --rm $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/$(DOCKER_IMAGE) make -C $(DOCKER_MOUNTPOINT) jenkins
+
 docker_tests-sle11sp4 ::
 	docker run --rm $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/salt-sle11sp4 make -C $(DOCKER_MOUNTPOINT) jenkins
 
 docker_tests-sle12sp1 ::
 	docker run --rm $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/salt-sle12sp1 make -C $(DOCKER_MOUNTPOINT) jenkins
+
+docker_shell ::
+	docker run -t -i --rm $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/$(DOCKER_IMAGE) /bin/bash
 
 docker_shell-sle11sp4 ::
 	docker run -t -i --rm $(DOCKER_VOLUMES) $(DOCKER_REGISTRY)/salt-sle11sp4 /bin/bash
