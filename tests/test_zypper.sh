@@ -4,8 +4,6 @@
 source etc/config
 source lib/utils.sh
 
-source /etc/os-release
-
 EXITCODE=0
 
 CMD="pkg.owner '/etc/zypp'"
@@ -24,17 +22,19 @@ JSONOUT=$($SALT_CALL $CMD --out json)
 if [ ${VERSION_ID%.*} -ge 12 ]; then
     echo "$JSONOUT" | bin/jsontest path={"$HOST","name"} type=s value="SLES"
     assert_run
-    echo "$JSONOUT" | bin/jsontest path={"$HOST","version"} type=s value="12.1"
-    assert_run
     echo "$JSONOUT" | bin/jsontest path={"$HOST","release"} type=s value="0"
     assert_run
 else
     echo "$JSONOUT" | bin/jsontest path={"$HOST","name"} type=s value="SUSE_SLES"
     assert_run
-    echo "$JSONOUT" | bin/jsontest path={"$HOST","version"} type=s value="11.4"
-    assert_run
     # better not testing the release in SLE11
 fi
+if [ $MINOR -eq 0 ]; then
+    echo "$JSONOUT" | bin/jsontest path={"$HOST","version"} type=s value="$MAJOR"
+else
+    echo "$JSONOUT" | bin/jsontest path={"$HOST","version"} type=s value="$MAJOR.$MINOR"
+fi
+assert_run
 
 INFO="Testing pkg.list_products with OEM release"
 describe "\${CMD}" "\${INFO}"

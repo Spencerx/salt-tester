@@ -19,14 +19,8 @@ assert_run
 CMD="grains.get os"
 INFO="Verify OS name"
 describe "\${CMD}" "\${INFO}"
-if [ -f /etc/os-release ]; then
-    $SALT_CALL $CMD --out json | bin/jsontest path=$HOST type=s contains="SUSE"
-    assert_run
-else
-    msg="No /etc/os-release file found."
-    skip_tests "\${msg}"
-fi
-source /etc/os-release
+$SALT_CALL $CMD --out json | bin/jsontest path=$HOST type=s contains="SUSE"
+assert_run
 
 # list all grains
 CMD="grains.items"
@@ -76,7 +70,9 @@ assert_run
 CMD="grains.get osrelease_info"
 INFO="Verify OS release"
 describe "\${CMD}" "\${INFO}"
-MAJOR=$(cat /etc/SuSE-release | grep VERSION | awk '{print $3}')
-MINOR=$(cat /etc/SuSE-release | grep PATCHLEVEL | awk '{print $3}')
-[ "2" == $($SALT_CALL $CMD --out json | grep -v $HOSTNAME | grep "$MAJOR\|$MINOR" | wc -l) ]
+if [ "$MINOR" != "0" ]; then
+    [ "2" == $($SALT_CALL $CMD --out json | grep -v $HOSTNAME | grep "$MAJOR\|$MINOR" | wc -l) ]
+else
+    [ "1" == $($SALT_CALL $CMD --out json | grep -v $HOSTNAME | grep "$MAJOR\|$MINOR" | wc -l) ]
+fi
 assert_run

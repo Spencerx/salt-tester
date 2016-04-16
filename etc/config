@@ -21,3 +21,15 @@ fi
 
 SALT_KEY_CMD="salt-key -c $SALT_ROOT"
 SALT_CALL="salt -l debug -c $SALT_ROOT $HOST"
+
+MAJOR=$(cat /etc/SuSE-release | grep VERSION | awk '{print $3}')
+MINOR=$(cat /etc/SuSE-release | grep PATCHLEVEL | awk '{print $3}')
+
+if [ -f /etc/os-release ]; then
+    source /etc/os-release
+else
+    # expect SLES11 SP3 and fake the values
+    PRETTY_NAME="SUSE Linux Enterprise Server 11 SP$MINOR"
+    NAME="SLES"
+    VERSION_ID="$MAJOR.$MINOR"
+fi
