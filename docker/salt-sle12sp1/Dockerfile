@@ -1,7 +1,7 @@
 # Container used to test cobbler against suse manager head
 #
 # NAME                  salt-sle12sp1
-# VERSION               1.0.1
+# VERSION               1.0.2
 
 FROM suma-docker-registry.suse.de/sles12sp1:0.1.0
 MAINTAINER Michael Calmer "mc@suse.com"
