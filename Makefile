@@ -1,5 +1,5 @@
 DOCKER_IMAGE          = salt-sle12sp1
-DOCKER_REGISTRY       = suma-docker-registry.mgr.suse.de
+DOCKER_REGISTRY       = registry.mgr.suse.de
 DOCKER_MOUNTPOINT     = /salt-tester
 DOCKER_VOLUMES        = -v "$(CURDIR)/:$(DOCKER_MOUNTPOINT)"
 
